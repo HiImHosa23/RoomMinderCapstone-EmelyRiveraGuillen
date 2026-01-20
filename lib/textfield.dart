@@ -28,6 +28,7 @@ class TheTextField extends StatelessWidget {
           ),
           fillColor: Colors.white,
           filled: true,
+          hintText: hintText,
           hintStyle: TextStyle(
             color: Colors.grey.shade600,
           ),
