@@ -79,7 +79,7 @@ class _SignInPageState extends State<SignInPage> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'Sign In',
+                        'Log In',
                         style: TextStyle(
                           color: Colors.blue,
                           decoration: TextDecoration.underline,
