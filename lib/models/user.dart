@@ -14,4 +14,25 @@ class User{
   });
 
 //  create a map
+  Map<String, dynamic> toMap(){
+    return{
+      'name': name,
+      'username': username,
+      'email': email,
+      'password': password,
+    };
+  }
+
+  factory User.fromMap(Map<String, dynamic> map){
+    return User(
+      name: map['name'],
+      username: map['username'],
+      email: map['email'],
+      password: map['password']
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+  factory User.fromJson(String source) =>
+      User.fromMap(json.decode(source));
 }

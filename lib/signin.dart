@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:roommindercapstone/services/auth_service.dart';
 import 'package:roommindercapstone/textfield.dart';
+
+import 'models/user.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -61,33 +64,51 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: (){
-                    print("Name: ${nameController.text}");
-                    print("Username: ${userController.text}");
-                    print("Email: ${emailController.text}");
-                    print("Password: ${passwordController.text}");
+                  onPressed: () async {
+                    // print("Name: ${nameController.text}");
+                    // print("Username: ${userController.text}");
+                    // print("Email: ${emailController.text}");
+                    // print("Password: ${passwordController.text}");
+                    User user = User(
+                      name: nameController.text,
+                      username: userController.text,
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
+                    String? error = await AuthService.register(user);
+
+                    if(error != null){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(error)),
+                      );
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Registered!')),
+                      );
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text('Sign Up'),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Already a roommate? "),
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Log In',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                // SizedBox(height: 20),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Text("Already a roommate? "),
+                //     GestureDetector(
+                //       onTap: (){
+                //         Navigator.pop(context);
+                //       },
+                //       child: Text(
+                //         'Log In',
+                //         style: TextStyle(
+                //           color: Colors.blue,
+                //           decoration: TextDecoration.underline,
+                //         ),
+                //       ),
+                //     )
+                //   ],
+                // ),
               ],
             ),
           ),

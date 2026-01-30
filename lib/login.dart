@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:roommindercapstone/dashboard.dart';
+import 'package:roommindercapstone/services/auth_service.dart';
 import 'package:roommindercapstone/textfield.dart';
 
 class LoginPage extends StatefulWidget {
@@ -45,24 +47,58 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Not a roommate? "),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.pushNamed(context, '/register');
-                    },
-                    child: Text(
-                      'Sign Up Here',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  )
-                ],
+              ElevatedButton(
+                onPressed: () async {
+                  final user = await AuthService.login(
+                    userController.text,
+                    passwordController.text,
+                  );
+                  if(user == null){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Invalid Login')),
+                    );
+                  }else{
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashboardPg(user: user)
+                      )
+                    );
+                  }
+                },
+                child: Text("Login")
+              ),
+              SizedBox(height: 15),
+              GestureDetector(
+                onTap: (){
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: Text(
+                  "Not a roommate? Sign Up",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               )
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Text("Not a roommate? "),
+              //     GestureDetector(
+              //       onTap: (){
+              //         Navigator.pushNamed(context, '/register');
+              //       },
+              //       child: Text(
+              //         'Sign Up Here',
+              //         style: TextStyle(
+              //           color: Colors.blue,
+              //           decoration: TextDecoration.underline,
+              //         ),
+              //       ),
+              //     )
+              //   ],
+              // )
             ],
           ),
         ),
