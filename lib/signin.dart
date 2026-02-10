@@ -63,33 +63,33 @@ class _SignInPageState extends State<SignInPage> {
                   obscureText: true,
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    // print("Name: ${nameController.text}");
-                    // print("Username: ${userController.text}");
-                    // print("Email: ${emailController.text}");
-                    // print("Password: ${passwordController.text}");
-                    User user = User(
-                      name: nameController.text,
-                      username: userController.text,
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    String? error = await AuthService.register(user);
-
-                    if(error != null){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(error)),
-                      );
-                    }else{
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Registered!')),
-                      );
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text('Sign Up'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     // print("Name: ${nameController.text}");
+                //     // print("Username: ${userController.text}");
+                //     // print("Email: ${emailController.text}");
+                //     // print("Password: ${passwordController.text}");
+                //     User user = User(
+                //       name: nameController.text,
+                //       username: userController.text,
+                //       email: emailController.text,
+                //       password: passwordController.text,
+                //     );
+                //     String? error = await AuthService.register(user);
+                //
+                //     if(error != null){
+                //       ScaffoldMessenger.of(context).showSnackBar(
+                //         SnackBar(content: Text(error)),
+                //       );
+                //     }else{
+                //       ScaffoldMessenger.of(context).showSnackBar(
+                //         const SnackBar(content: Text('Registered!')),
+                //       );
+                //       Navigator.pop(context);
+                //     }
+                //   },
+                //   child: Text('Sign Up'),
+                // ),
                 // SizedBox(height: 20),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.center,
