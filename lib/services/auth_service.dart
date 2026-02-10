@@ -1,6 +1,42 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
+class AuthService{
+  static const theURL = "http://10.0.2.2:5200";
+
+  //This is for the sign up
+  static Future<String?> register(User user) async{
+    final response = await http.post(
+      Uri.parse("$theURL/signup"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(user.toJson()),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 201){
+      return null;
+    }else{
+      return "Registration failed ;-;";
+    }
+  }
+
+  //This is for login
+  static Future<User?> login(String username, String password) async {
+    final response = await http.post(
+      Uri.parse("$theURL/login"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "username": username,
+        "password": password,
+      }),
+    );
+
+    if(response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    }
+    return null;
+  }
+}
 
 //Old authentication service
 // class AuthService{

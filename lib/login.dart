@@ -68,6 +68,27 @@ class _LoginPageState extends State<LoginPage> {
               //   },
               //   child: Text("Login")
               // ),
+              ElevatedButton(
+                onPressed: () async {
+                  final user = await AuthService.login(
+                    userController.text,
+                    passwordController.text,
+                  );
+                  if(user == null){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Invalid Login!!!')),
+                    );
+                  }else{
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashboardPg(user: user),
+                      ),
+                    );
+                  }
+                },
+                child: Text("Log In"),
+              ),
               SizedBox(height: 15),
               GestureDetector(
                 onTap: (){
@@ -99,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
               //     )
               //   ],
               // )
+              
             ],
           ),
         ),
