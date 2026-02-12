@@ -12,50 +12,62 @@ class _CalendarPgState extends State<CalendarPg> {
   DateTime _focusedD = DateTime.now();
   DateTime? _selectD;
 
-  final Map<DateTime, List<String>> events = {};
+  final Map<DateTime, List<String>> _events = {};
 
-  List<String> _getEvents(DateTime day){
-    final key = DateTime(day.year, day.month, day.day);
-    return events[key] ?? [];
+  List<String> _getEventsForDay(DateTime day){
+    return _events[DateTime(day.year, day.month, day.day)] ?? [];
   }
 
   //Add event logic here
+  void _addEvent() async{
+    if(_selectD == null) return;
+    TextEditingController controller = TextEditingController();
+
+    String? result = await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Add Event"),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: "Enter event name",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text("Save"),
+          ),
+        ],
+      ),
+    );
+    if (result != null && result.isNotEmpty){
+      final key = DateTime(
+        _selectD!.year,
+        _selectD!.month,
+        _selectD!.day,
+      );
+      _events.putIfAbsent(key, () => []);
+      _events[key]!.add(result);
+
+      setState(() {});
+    }
+  }
+
+  //Add edit event logic here
+
+  //Add delete event logic here
 
   @override
   Widget build(BuildContext context) {
-    final eventList =
-        _selectD == null ? [] : _getEvents(_selectD!);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Calendar"),
-      ),
-      body: Column(
-        children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2020),
-            lastDay: DateTime.utc(2030),
-            focusedDay: _focusedD,
-            selectedDayPredicate: (day) =>
-              isSameDay(_selectD, day),
-            onDaySelected: (selected, focused){
-              setState((){
-                _selectD = selected;
-                _focusedD = focused;
-              });
-            },
-          ),
-          SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              itemCount: eventList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(eventList[index]),
-                );
-              },
-            ),
-          )
-        ],
       ),
     );
   }
