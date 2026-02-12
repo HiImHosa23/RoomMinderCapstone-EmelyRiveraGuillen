@@ -28,27 +28,27 @@ class DashboardPg extends StatelessWidget {
           ),
           SizedBox(height: 20),
           //Display Calendar
-          // GestureDetector(
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (_) => const CalendarPg(),
-          //       ),
-          //     );
-          //   },
-          //   child: Card(
-          //     margin: EdgeInsets.all(12),
-          //     child: TableCalendar(
-          //       firstDay: DateTime.utc(2020),
-          //       lastDay: DateTime.utc(2030),
-          //       focusedDay: DateTime.now(),
-          //       headerStyle: HeaderStyle(
-          //         formatButtonVisible: false,
-          //       ),
-          //     ),
-          //   ),
-          // )
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CalendarPg(),
+                ),
+              );
+            },
+            child: Card(
+              margin: EdgeInsets.all(12),
+              child: TableCalendar(
+                firstDay: DateTime.utc(2020),
+                lastDay: DateTime.utc(2030),
+                focusedDay: DateTime.now(),
+                headerStyle: HeaderStyle(
+                  formatButtonVisible: false,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

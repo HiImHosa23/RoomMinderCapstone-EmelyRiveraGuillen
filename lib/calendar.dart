@@ -64,10 +64,58 @@ class _CalendarPgState extends State<CalendarPg> {
 
   @override
   Widget build(BuildContext context) {
-
+    final events = _selectD == null ? [] : _getEventsForDay(_selectD!);
     return Scaffold(
       appBar: AppBar(
         title: Text("Calendar"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addEvent,
+        child: Icon(Icons.add),
+      ),
+      body: Column(
+        children: [
+          TableCalendar(
+            firstDay: DateTime.utc(2020),
+            lastDay: DateTime.utc(2030),
+            focusedDay: _focusedD,
+            selectedDayPredicate: (day) => isSameDay(_selectD, day),
+            onDaySelected: (selected, focused){
+              setState(() {
+                _selectD = selected;
+                _focusedD = focused;
+              });
+            },
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+            ),
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              itemCount: events.length,
+              itemBuilder: (context, index){
+                final event = events[index];
+                return ListTile(
+                  title: Text(event),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () => {},//edit event
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () => {},//delete event
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          )
+        ],
       ),
     );
   }
