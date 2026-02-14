@@ -92,6 +92,15 @@ class _CalendarPgState extends State<CalendarPg> {
   }
 
   //Add delete event logic here
+  void _deleteEvent(String event){
+    final key = DateTime(
+      _selectD!.year,
+      _selectD!.month,
+      _selectD!.day,
+    );
+    _events[key]!.remove(event);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +147,7 @@ class _CalendarPgState extends State<CalendarPg> {
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
-                        onPressed: () => {},//delete event
+                        onPressed: () => _deleteEvent(event),//delete event
                       ),
                     ],
                   ),
