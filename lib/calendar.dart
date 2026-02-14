@@ -59,6 +59,37 @@ class _CalendarPgState extends State<CalendarPg> {
   }
 
   //Add edit event logic here
+  void _editEvent(String oldEvent) async{
+    TextEditingController controller = TextEditingController(text: oldEvent);
+
+    String? result = await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Edit Event"),
+        content: TextField(controller: controller),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text("Save"),
+          ),
+        ],
+      ),
+    );
+    if(result != null && result.isNotEmpty){
+      final key = DateTime(
+        _selectD!.year,
+        _selectD!.month,
+        _selectD!.day,
+      );
+      int index = _events[key]!.indexOf(oldEvent);
+      _events[key]![index] = result;
+      setState(() {});
+    }
+  }
 
   //Add delete event logic here
 
@@ -103,7 +134,7 @@ class _CalendarPgState extends State<CalendarPg> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.edit),
-                        onPressed: () => {},//edit event
+                        onPressed: () => _editEvent(event),//edit event
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
