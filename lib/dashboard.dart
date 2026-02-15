@@ -33,7 +33,7 @@ class DashboardPg extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const CalendarPg(),
+                  builder: (_) => CalendarPg(user: user),
                 ),
               );
             },

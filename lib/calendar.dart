@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:roommindercapstone/models/user.dart';
+import 'package:roommindercapstone/services/ev_service.dart';
+import 'package:roommindercapstone/models/events.dart';
+import 'package:intl/intl.dart';
+
 
 class CalendarPg extends StatefulWidget {
-  const CalendarPg({super.key});
+  final User user;
+  const CalendarPg({super.key, required this.user});
 
   @override
   State<CalendarPg> createState() => _CalendarPgState();
@@ -12,9 +18,30 @@ class _CalendarPgState extends State<CalendarPg> {
   DateTime _focusedD = DateTime.now();
   DateTime? _selectD;
 
-  final Map<DateTime, List<String>> _events = {};
+  Map<DateTime, List<Event>> _events = {};
 
-  List<String> _getEventsForDay(DateTime day){
+  @override
+  void initState(){
+    super.initState();
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    final events = await EventService.getEvents(widget.user.id!);
+    Map<DateTime, List<Event>> grouped = {};
+    for(var event in events){
+      DateTime date = DateTime.parse(event.date);
+      Text(DateFormat('yyyy-MM-dd').format(date));
+      final key = DateTime(date.year, date.month, date.day);
+      grouped.putIfAbsent(key, () => []);
+      grouped[key]!.add(event);
+    }
+    setState(() {
+      _events = grouped;
+    });
+  }
+
+  List<Event> _getEventsForDay(DateTime day){
     return _events[DateTime(day.year, day.month, day.day)] ?? [];
   }
 
@@ -46,21 +73,27 @@ class _CalendarPgState extends State<CalendarPg> {
       ),
     );
     if (result != null && result.isNotEmpty){
-      final key = DateTime(
-        _selectD!.year,
-        _selectD!.month,
-        _selectD!.day,
+      // final key = DateTime(
+      //   _selectD!.year,
+      //   _selectD!.month,
+      //   _selectD!.day,
+      // );
+      // _events.putIfAbsent(key, () => []);
+      // _events[key]!.add(result);
+      //
+      // setState(() {});
+      await EventService.addEvent(
+        result,
+        _selectD!.toIso8601String(),
+        widget.user.id!
       );
-      _events.putIfAbsent(key, () => []);
-      _events[key]!.add(result);
-
-      setState(() {});
+      _loadEvents();
     }
   }
 
   //Add edit event logic here
-  void _editEvent(String oldEvent) async{
-    TextEditingController controller = TextEditingController(text: oldEvent);
+  void _editEvent(Event event) async{
+    TextEditingController controller = TextEditingController(text: event.title);
 
     String? result = await showDialog(
       context: context,
@@ -80,26 +113,34 @@ class _CalendarPgState extends State<CalendarPg> {
       ),
     );
     if(result != null && result.isNotEmpty){
-      final key = DateTime(
-        _selectD!.year,
-        _selectD!.month,
-        _selectD!.day,
+      // final key = DateTime(
+      //   _selectD!.year,
+      //   _selectD!.month,
+      //   _selectD!.day,
+      // );
+      // int index = _events[key]!.indexOf(oldEvent);
+      // _events[key]![index] = result;
+      // setState(() {});
+      await EventService.updateEvent(
+        event.id,
+        result,
+        event.date,
       );
-      int index = _events[key]!.indexOf(oldEvent);
-      _events[key]![index] = result;
-      setState(() {});
+      _loadEvents();
     }
   }
 
   //Add delete event logic here
-  void _deleteEvent(String event){
-    final key = DateTime(
-      _selectD!.year,
-      _selectD!.month,
-      _selectD!.day,
-    );
-    _events[key]!.remove(event);
-    setState(() {});
+  void _deleteEvent(Event event) async{
+    // final key = DateTime(
+    //   _selectD!.year,
+    //   _selectD!.month,
+    //   _selectD!.day,
+    // );
+    // _events[key]!.remove(event);
+    // setState(() {});
+    await EventService.deleteEvent(event.id);
+    _loadEvents();
   }
 
   @override
@@ -137,7 +178,8 @@ class _CalendarPgState extends State<CalendarPg> {
               itemBuilder: (context, index){
                 final event = events[index];
                 return ListTile(
-                  title: Text(event),
+                  title: Text(event.title),
+                  // subtitle: Text(DateFormat.yMMMd().format(DateTime.parse(event.date))),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
