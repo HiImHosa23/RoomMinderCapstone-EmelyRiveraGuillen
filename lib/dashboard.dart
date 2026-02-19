@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:roommindercapstone/calendar.dart';
+import 'package:roommindercapstone/chore_assigner.dart';
 import 'package:roommindercapstone/models/user.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -25,6 +26,18 @@ class DashboardPg extends StatelessWidget {
               fontSize: 25,
               fontWeight: FontWeight.bold,
             ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChorePg(user: user),
+                ),
+              );
+            },
+            child: Text("Chore Assigner"),
           ),
           SizedBox(height: 20),
           //Display Calendar

@@ -16,14 +16,16 @@ class EventService {
     );
   }
 
-  static Future<void> addEvent(String title, String date, String userId) async{
+  static Future<void> addEvent(String title, String date, String userId,{String? assignedTo, String? type}) async{
     await http.post(
       Uri.parse(evUrl),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "title": title,
         "date": date,
-        "userId": userId
+        "userId": userId,
+        "assignedTo": assignedTo,
+        "type": type,
       }),
     );
   }
