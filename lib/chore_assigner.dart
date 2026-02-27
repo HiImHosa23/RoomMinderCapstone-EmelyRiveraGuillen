@@ -54,6 +54,93 @@ class _ChorePgState extends State<ChorePg> {
   }
   //add logic here
   void _openAssign(String roommate){
-
+    TextEditingController controller = TextEditingController();
+    DateTime? selectedD;
+    String selectedP = "Low";
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setStateDialog){
+          return AlertDialog(
+            title: Text("Assign to $roommate"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText: "Enter Chore",
+                  ),
+                ),
+                SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: () async {
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2030),
+                      initialDate: DateTime.now(),
+                    );
+                    if(picked != null){
+                      setStateDialog(() {
+                        selectedD = picked;
+                      });
+                    }
+                  },
+                  child: Text(
+                    selectedD == null
+                        ? "Pick Date"
+                        : selectedD!.toString().split(" ")[0],
+                  ),
+                ),
+                SizedBox(height: 15),
+                DropdownButton(
+                  value: selectedP,
+                  items: ["Low", "Medium", "High"]
+                    .map((level) => DropdownMenuItem(
+                          value: level,
+                          child: Text(level),
+                        ))
+                    .toList(),
+                  onChanged: (value){
+                    setStateDialog((){
+                      selectedP = value!;
+                    });
+                  },
+                )
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if(controller.text.isNotEmpty && selectedD != null){
+                    await EventService.addEvent(
+                      controller.text,
+                      selectedD!.toIso8601String(),
+                      widget.user.id!,
+                      assignedTo: roommate,
+                      type: "chore",
+                    );
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Chore assigned!"),
+                      )
+                    );
+                  }
+                },
+                child: Text("Save"),
+              )
+            ],
+          );
+        },
+      )
+    );
   }
 }
+//Find a way to make the priority to actually work and find a way to show who it belongs to
+
