@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:roommindercapstone/bill_splitter.dart';
 import 'package:roommindercapstone/calendar.dart';
 import 'package:roommindercapstone/chore_assigner.dart';
 import 'package:roommindercapstone/models/user.dart';
 import 'package:roommindercapstone/models/events.dart';
 import 'package:roommindercapstone/services/ev_service.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:roommindercapstone/bill_splitter.dart';
 
 class DashboardPg extends StatefulWidget {
   final User user;
@@ -62,6 +64,17 @@ class _DashboardPgState extends State<DashboardPg> {
                 );
               },
               child: Text("Chore Assigner"),
+            ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BillPg(user: widget.user),
+                  ),
+                );
+              },
+              child: Text("Bill Splitter"),
             ),
             SizedBox(height: 20),
             GestureDetector(
