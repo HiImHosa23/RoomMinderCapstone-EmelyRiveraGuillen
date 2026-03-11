@@ -149,53 +149,128 @@ class _CalendarPgState extends State<CalendarPg> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Calendar"),
+        backgroundColor: Color(0xFF4FAF9F),
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF4FAF9F),
         onPressed: _addEvent,
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.white),
       ),
       body: Column(
         children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2020),
-            lastDay: DateTime.utc(2030),
-            focusedDay: _focusedD,
-            selectedDayPredicate: (day) => isSameDay(_selectD, day),
-            onDaySelected: (selected, focused){
-              setState(() {
-                _selectD = selected;
-                _focusedD = focused;
-              });
-            },
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: TableCalendar(
+                  firstDay: DateTime.utc(2020),
+                  lastDay: DateTime.utc(2030),
+                  focusedDay: _focusedD,
+                  selectedDayPredicate: (day) => isSameDay(_selectD, day),
+                  onDaySelected: (selected, focused){
+                    setState(() {
+                      _selectD = selected;
+                      _focusedD = focused;
+                    });
+                  },
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false,
+                    titleCentered: true,
+                  ),
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: Color(0xFF4FAF9F),
+                      shape: BoxShape.circle,
+                    ),
+                    selectedDecoration: BoxDecoration(
+                      color: Color(0xFF4FAF9F),
+                      shape: BoxShape.circle,
+                    ),
+                    weekendTextStyle: TextStyle(
+                      color: Color(0xFF4FAF9F),
+                    ),
+                  ),
+                  eventLoader: _getEventsForDay,
+                ),
+              ),
             ),
           ),
+          if(_selectD != null)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                DateFormat.yMMMMd().format(_selectD!),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF4FAF9F),
+                ),
+              ),
+            ),
           SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
+            child: events.isEmpty ? Center(
+              child: Text(
+                "No events here!",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+            ) : ListView.builder(
               itemCount: events.length,
               itemBuilder: (context, index){
                 final event = events[index];
-                return ListTile(
-                  title: Text(event.title),
-                  // subtitle: Text(DateFormat.yMMMd().format(DateTime.parse(event.date))),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () => _editEvent(event),//edit event
+
+                return Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    title: Text(
+                      event.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () => _deleteEvent(event),//delete event
-                      ),
-                    ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Color(0xFF4FAF9F),
+                          ),
+                          onPressed: () => _editEvent(event),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
+                          onPressed: () => _deleteEvent(event),
+                        )
+                      ],
+                    ),
                   ),
                 );
               },
-            ),
+            )
           )
         ],
       ),

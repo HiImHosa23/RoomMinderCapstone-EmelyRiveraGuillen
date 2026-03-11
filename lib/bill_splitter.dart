@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:roommindercapstone/models/bill.dart';
 import 'package:roommindercapstone/models/user.dart';
+import 'package:roommindercapstone/services/bill_service.dart';
 
 class BillPg extends StatefulWidget {
   final User user;
@@ -45,7 +46,7 @@ class _BillPgState extends State<BillPg> {
     };
   }
 
-  void saveTheBill() {
+  void saveTheBill() async{
     double total = double.tryParse(totalController.text) ?? 0;
     List<BillInfo> info = [];
     List<String> chosenmate =
@@ -110,6 +111,14 @@ class _BillPgState extends State<BillPg> {
               controller: titleController,
               decoration: InputDecoration(
                 labelText: "Bill name",
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: totalController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: "Total",
               ),
             ),
             SizedBox(height: 10),

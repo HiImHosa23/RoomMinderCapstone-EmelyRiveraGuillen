@@ -13,6 +13,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'RoomMinder',
+      theme: ThemeData(
+        primaryColor: Color(0xFF4FAF9F),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFF4FAF9F),
+          foregroundColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF4FAF9F)
+        )
+      ),
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => LoginPage(),

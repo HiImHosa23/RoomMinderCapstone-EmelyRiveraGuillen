@@ -20,122 +20,146 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(15.0),
-        child: Center(
-          child: SingleChildScrollView(
+      backgroundColor: Color(0xFFF3F8F7),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.person_add,
-                  size: 100,
-                ),
-                Text(
-                  "RoomMinder Sign Up",
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF4FAF9F).withOpacity(.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.person_add_rounded,
+                    size: 70,
+                    color: Color(0xFF4FAF9F),
                   ),
                 ),
                 SizedBox(height: 20),
-                TheTextField(
-                  controller: nameController,
-                  hintText: 'Name',
-                  obscureText: false,
+                Text(
+                  "Become a roommate!",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF4FAF9F),
+                  ),
                 ),
-                SizedBox(height: 15),
-                TheTextField(
-                  controller: userController,
-                  hintText: 'Username',
-                  obscureText: false,
+                SizedBox(height: 5),
+                Text(
+                  "Create your account ",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
                 ),
-                SizedBox(height: 15),
-                TheTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false,
-                ),
-                SizedBox(height: 15),
-                TheTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
+                SizedBox(height: 35),
+                Container(
+                  padding: EdgeInsets.all(25),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 15,
+                        offset: Offset(0, 6),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      TheTextField(
+                        controller: nameController,
+                        hintText: 'Name',
+                        obscureText: false,
+                      ),
+                      SizedBox(height: 15),
+                      TheTextField(
+                        controller: userController,
+                        hintText: 'Username',
+                        obscureText: false,
+                      ),
+                      SizedBox(height: 15),
+                      TheTextField(
+                        controller: emailController,
+                        hintText: 'Email',
+                        obscureText: false,
+                      ),
+                      SizedBox(height: 15),
+                      TheTextField(
+                        controller: passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                      ),
+                      SizedBox(height: 25),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF4FAF9F),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 15,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          onPressed: () async {
+                            User user = User(
+                              name: nameController.text,
+                              username: userController.text,
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                            String? error = await AuthService.register(user);
+                            if(error != null){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(error)),
+                              );
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Registered!')),
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Text(
+                            "Create Account",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(height: 20),
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     // print("Name: ${nameController.text}");
-                //     // print("Username: ${userController.text}");
-                //     // print("Email: ${emailController.text}");
-                //     // print("Password: ${passwordController.text}");
-                //     User user = User(
-                //       name: nameController.text,
-                //       username: userController.text,
-                //       email: emailController.text,
-                //       password: passwordController.text,
-                //     );
-                //     String? error = await AuthService.register(user);
-                //
-                //     if(error != null){
-                //       ScaffoldMessenger.of(context).showSnackBar(
-                //         SnackBar(content: Text(error)),
-                //       );
-                //     }else{
-                //       ScaffoldMessenger.of(context).showSnackBar(
-                //         const SnackBar(content: Text('Registered!')),
-                //       );
-                //       Navigator.pop(context);
-                //     }
-                //   },
-                //   child: Text('Sign Up'),
-                // ),
-                // SizedBox(height: 20),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Text("Already a roommate? "),
-                //     GestureDetector(
-                //       onTap: (){
-                //         Navigator.pop(context);
-                //       },
-                //       child: Text(
-                //         'Log In',
-                //         style: TextStyle(
-                //           color: Colors.blue,
-                //           decoration: TextDecoration.underline,
-                //         ),
-                //       ),
-                //     )
-                //   ],
-                // ),
-                ElevatedButton(
-                  onPressed: () async {
-                    User user = User(
-                      name: nameController.text,
-                      username: userController.text,
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    String? error = await AuthService.register(user);
-                    if(error != null){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(error)),
-                      );
-                    }else{
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Registered!!!')),
-                      );
-                      Navigator.pop(context);
-                    }
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
                   },
-                  child: Text('Sign Up'),
+                  child: Text(
+                    "Already a roommate? Log in",
+                    style: TextStyle(
+                      color: Color(0xFF4FAF9F),
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 )
               ],
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }
