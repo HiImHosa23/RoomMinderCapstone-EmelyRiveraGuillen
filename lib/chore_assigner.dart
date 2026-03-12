@@ -25,30 +25,67 @@ class _ChorePgState extends State<ChorePg> {
       "Claire"
     ];
   }
+  String _getProfileImage(String name){
+    switch (name){
+      case "Jen":
+        return "assets/jen.jpg";
+      case "Sam":
+        return "assets/sam.jpg";
+      case "Claire":
+        return "assets/claire.jpg";
+      default:
+        return "assets/user.jpg";
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Chore Assigner"),
       ),
-      body: ListView.builder(
-        itemCount: roommates.length,
-        itemBuilder: (context, index){
-          final roommate = roommates[index];
-          final isUser = roommate == widget.user.name;
-          return Card(
-            margin: EdgeInsets.all(10),
-            child: ListTile(
-              title: Text(
-                isUser ? "$roommate (You)" : roommate,
-              ),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: (){
-                _openAssign(roommate);
-              },
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: roommates.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
             ),
-          );
-        },
+            itemBuilder: (context, index){
+              final roommate = roommates[index];
+              final isUser = roommate == widget.user.name;
+
+              return GestureDetector(
+                onTap: (){
+                  _openAssign(roommate);
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 45,
+                      backgroundImage: AssetImage(
+                        _getProfileImage(roommate),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      isUser ? "$roommate (You)" : roommate,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -56,6 +93,7 @@ class _ChorePgState extends State<ChorePg> {
   void _openAssign(String roommate){
     TextEditingController controller = TextEditingController();
     DateTime? selectedD;
+    TimeOfDay? selectedT;
     String selectedP = "Low";
     showDialog(
       context: context,
@@ -93,6 +131,25 @@ class _ChorePgState extends State<ChorePg> {
                         : selectedD!.toString().split(" ")[0],
                   ),
                 ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    TimeOfDay? picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if(picked != null){
+                      setStateDialog((){
+                        selectedT = picked;
+                      });
+                    }
+                  },
+                  child: Text(
+                    selectedT == null
+                        ? "Pick Time"
+                        : selectedT!.format(context),
+                  ),
+                ),
                 SizedBox(height: 15),
                 DropdownButton(
                   value: selectedP,
@@ -118,9 +175,16 @@ class _ChorePgState extends State<ChorePg> {
               TextButton(
                 onPressed: () async {
                   if(controller.text.isNotEmpty && selectedD != null){
+                    DateTime finalDate = DateTime(
+                      selectedD!.year,
+                      selectedD!.month,
+                      selectedD!.day,
+                      selectedT?.hour ?? 0,
+                      selectedT?.minute ?? 0,
+                    );
                     await EventService.addEvent(
                       controller.text,
-                      selectedD!.toIso8601String(),
+                      finalDate.toIso8601String(),
                       widget.user.id!,
                       assignedTo: roommate,
                       type: "chore",

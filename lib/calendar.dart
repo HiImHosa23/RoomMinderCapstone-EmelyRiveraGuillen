@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:roommindercapstone/models/user.dart';
@@ -49,45 +51,74 @@ class _CalendarPgState extends State<CalendarPg> {
   void _addEvent() async{
     if(_selectD == null) return;
     TextEditingController controller = TextEditingController();
+    TimeOfDay? selectedT;
 
     String? result = await showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text("Add Event"),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: "Enter event name",
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text("Save"),
-          ),
-        ],
-      ),
+      builder: (_) => StatefulBuilder(
+        builder: (context, setStateDialog){
+          return AlertDialog(
+            title: Text("Add Event"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText: "Enter event name",
+                  ),
+                ),
+                SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () async {
+                    TimeOfDay? picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if(picked != null){
+                      setStateDialog((){
+                        selectedT = picked;
+                      });
+                    }
+                  },
+                  child: Text(
+                    selectedT == null
+                        ? "Pick Time"
+                        : selectedT!.format(context),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, controller.text),
+                child: Text("Save"),
+              )
+            ],
+          );
+        },
+      )
     );
-    if (result != null && result.isNotEmpty){
-      // final key = DateTime(
-      //   _selectD!.year,
-      //   _selectD!.month,
-      //   _selectD!.day,
-      // );
-      // _events.putIfAbsent(key, () => []);
-      // _events[key]!.add(result);
-      //
-      // setState(() {});
+    if(result != null && result.isNotEmpty){
+      DateTime finalDate = DateTime(
+        _selectD!.year,
+        _selectD!.month,
+        _selectD!.day,
+        selectedT?.hour ?? 0,
+        selectedT?.minute ?? 0,
+      );
       await EventService.addEvent(
         result,
-        _selectD!.toIso8601String(),
-        widget.user.id!
+        finalDate.toIso8601String(),
+        widget.user.id!,
+        type: "event",
       );
       _loadEvents();
+      // Navigator.pop(context, true);
     }
   }
 
@@ -127,6 +158,7 @@ class _CalendarPgState extends State<CalendarPg> {
         event.date,
       );
       _loadEvents();
+      Navigator.pop(context, true);
     }
   }
 
@@ -141,6 +173,7 @@ class _CalendarPgState extends State<CalendarPg> {
     // setState(() {});
     await EventService.deleteEvent(event.id);
     _loadEvents();
+    Navigator.pop(context, true);
   }
 
   @override
@@ -247,6 +280,18 @@ class _CalendarPgState extends State<CalendarPg> {
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                       ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          DateFormat.jm().format(DateTime.parse(event.date)),
+                        ),
+                        if(event.assignedTo != null && event.assignedTo!.isNotEmpty)
+                          Text("Assigned to: ${event.assignedTo}"),
+                        if(event.priority != null && event.priority!.isNotEmpty)
+                          Text("Priority: ${event.priority}"),
+                      ],
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

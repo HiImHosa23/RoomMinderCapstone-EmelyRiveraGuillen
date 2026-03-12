@@ -31,13 +31,15 @@ class _DashboardPgState extends State<DashboardPg> {
   }
 
   Future<void> _navigateAndRefresh(Widget page) async {
-    await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => page),
     );
-    setState(() {
-      _loadEvents();
-    });
+    if(result == true ){
+      setState(() {
+        _loadEvents();
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -85,6 +87,9 @@ class _DashboardPgState extends State<DashboardPg> {
                   firstDay: DateTime.utc(2020),
                   lastDay: DateTime.utc(2030),
                   focusedDay: DateTime.now(),
+                  eventLoader: (day){
+                    return[];
+                  },
                   headerStyle: HeaderStyle(
                     formatButtonVisible: false,
                     titleCentered: true,

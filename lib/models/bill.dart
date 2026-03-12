@@ -20,13 +20,13 @@ class Bill {
   final String title;
   final double total;
   final String splitType;
-  final List<BillInfo> info;
+  final List<BillInfo> roommates;
 
   Bill({
     required this.title,
     required this.total,
     required this.splitType,
-    required this.info,
+    required this.roommates,
   });
 
   Map<String, dynamic> toJson(){
@@ -34,7 +34,7 @@ class Bill {
       "title": title,
       "total": total,
       "splitType": splitType,
-      "info": info.map((m) => m.toJson()).toList(),
+      "roommates": roommates.map((m) => m.toJson()).toList(),
     };
   }
 }

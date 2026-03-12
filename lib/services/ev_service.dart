@@ -35,13 +35,16 @@ class EventService {
     await http.delete(Uri.parse("$evUrl/$id"));
   }
 
-  static Future<void> updateEvent(String id, String title, String date) async{
+  static Future<void> updateEvent(String id, String title, String date, {String? assignedTo, String? priority, String? type}) async{
     await http.put(
       Uri.parse("$evUrl/$id"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "title": title,
         "date": date,
+        "assignedTo": assignedTo,
+        "priority": priority,
+        "type": type
 
       })
     );

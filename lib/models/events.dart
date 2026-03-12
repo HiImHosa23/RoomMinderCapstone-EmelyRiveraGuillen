@@ -25,9 +25,9 @@ class Event {
       title: json["title"],
       date: json["date"],
       userId: json["userId"],
-      assignedTo: json["assignedTo"],
-      type: json["type"],
-      priority: json["priority"],
+      assignedTo: json["assignedTo"] ?? "",
+      type: json["type"] ?? "",
+      priority: json["priority"] ?? "",
     );
   }
 }

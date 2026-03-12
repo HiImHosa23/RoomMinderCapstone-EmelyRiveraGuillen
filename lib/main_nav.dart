@@ -32,6 +32,12 @@ class _MainNavPgState extends State<MainNavPg> {
   void _onTap(int index){
     setState(() {
       _selectedIndex = index;
+      _pages = [
+        DashboardPg(user: widget.user),
+        ChorePg(user: widget.user),
+        BillPg(user: widget.user),
+        CalendarPg(user: widget.user),
+      ];
     });
   }
   @override
@@ -76,10 +82,12 @@ class _MainNavPgState extends State<MainNavPg> {
           )
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
+      body: [
+        DashboardPg(user: widget.user),
+        ChorePg(user: widget.user),
+        BillPg(user: widget.user),
+        CalendarPg(user: widget.user),
+      ][_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTap,
